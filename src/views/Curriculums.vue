@@ -4,7 +4,7 @@
       class="mb-2" 
       type="primary" 
       danger 
-      v-if="currentUser.role == 'system_admin'" 
+      v-if="currentUser.account_type.includes('A')" 
       @click="showModal"
     >
     Create Curriculum

@@ -88,10 +88,6 @@ export default {
   props: ["minNav", "color"],
   created() {
     this.minNav;
-    if(this.$store.state.signedIn){
-      this.role = this.$store.state.currentUser.role
-      this.role = this.role[0].toUpperCase() + this.role.slice(1) 
-    }
   },
   methods: {
     ...mapMutations(["navbarMinimize", "toggleConfigurator"]),

@@ -3,7 +3,7 @@
   <div class="container-fluid py-4">
     
     <a-button 
-      v-if="currentUser.role == 'system_admin'" 
+      v-if="currentUser.account_type.includes('A')" 
       class="mb-2" 
       type="primary" 
       danger 

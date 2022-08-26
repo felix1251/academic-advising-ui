@@ -2,10 +2,13 @@
   <div class="d-flex flex-column">
     <a-modal v-model:visible="visible" title="Student" centered>
       <div class="d-flex flex-column fs-6">
-        <span><b>Name: </b> {{ student_data.fullname }}</span>
-        <span><b>College: </b> {{ student_data.college_code }}</span>
-        <span><b>Course: </b> {{ student_data.curriculum_code }}</span>
-        <span><b>Id number: </b> {{ student_data.id_number }}</span>
+        <span><b>Name: </b> {{student_data.first_name}} 
+          {{student_data.middle_name}}. 
+          {{student_data.last_name}}
+          {{student_data.suffix}}
+        </span>
+        <span><b>College: </b> {{student_data.college_code}}</span>
+        <span><b>Course: </b> {{student_data.curriculum_code}}</span>
       </div>
       <template #footer>
         <a-button

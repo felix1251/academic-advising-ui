@@ -23,13 +23,13 @@
               <form role="form" class="text-start mt-3" @submit.prevent = "signin">
                 <div class="mb-3">
                   <vmd-input
-                    id="email"
-                    type="email"
-                    label="Email"
-                    name="email"
-                    :value="email"
+                    id="username"
+                    type="text"
+                    label="Username"
+                    name="username"
+                    :value="username"
                     :required="true"
-                    @input="email = $event.target.value"
+                    @input="username = $event.target.value"
                   />
                 </div>
                 <div class="mb-3">
@@ -90,7 +90,7 @@ export default {
   data() {
     return{
       password: "",
-      email:"",
+      username:"",
       error: ""
     }
   },
@@ -116,10 +116,10 @@ export default {
   methods: {
     ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
     click() {
-      console.log(this.password, this.email)
+      // console.log(this.password, this.email)
     },
     signin () {
-      this.$plain.post('/signin', { email: this.email, password: this.password })
+      this.$plain.post('/admin_signin', { username: this.username, password: this.password })
         .then(response => {
           this.signinSuccessful(response)
           this.$toast.open({
