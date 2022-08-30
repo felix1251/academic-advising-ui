@@ -1,6 +1,5 @@
 <template>
   <div class="container-fluid py-4">
-    
     <a-button 
       v-if="currentUser.account_type.includes('A')" 
       danger
@@ -9,14 +8,14 @@
       @click="showModal"
       >Create Prerequisite
     </a-button>
-
-     <a-table
+    <a-table
       bordered
       rowKey="id"
       :columns="columns"
       :data-source="data"
       :scroll="{ x: 600 }"
       :pagination="{ pageSize: 10 }"
+      size="small"
       >
         <!-- <template
           v-if="currentUser.role == 'system_admin'"
@@ -126,11 +125,11 @@ export default {
           customRender: (s) => <div>{s.record.prerequisite_code.toUpperCase()} ({s.record.prerequisite_description}) </div>,
           width: 300,
         },
-        {
-          title: 'Group id',
-          dataIndex: 'group_id',
-          width: 100,
-        },
+        // {
+        //   title: 'Group id',
+        //   dataIndex: 'group_id',
+        //   width: 100,
+        // },
         // {
         //   title: 'Year',
         //   width: 100,
@@ -159,35 +158,7 @@ export default {
     ...mapState(["currentUser"]),
   },
   mounted: function (){
-    this.loading = true;
-    this.$secured.get('/api/v1/prerequisites')
-        .then(response => { this.data = response.data})
-        .catch(error => { console.log(error) });
-
-    //     if (this.currentUser.role == "system_admin") {
-    //   const additionCol = {
-    //     title: "Operation",
-    //     dataIndex: "operation",
-    //     width: 155,
-    //     fixed: "right",
-    //     slots: {
-    //       customRender: "operation",
-    //     },
-    //   };
-    //   this.columns.push(additionCol);
-    //   this.$secured.get("/api/v1/roles")
-    //     .then((response) => {
-    //       this.roleSelection = response.data.data;
-    //       this.role = response.data.data[0];
-    //       this.filter = [...this.filter, ...this.roleSelection];
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }
-    setTimeout(() => {
-      this.loading = false;
-    }, 700)  
+    this.fetchPrereq()
   },
   
   methods: {
@@ -196,8 +167,20 @@ export default {
       this.fetchSubjects()
       // this.fetchCurr()
     },
+    fetchPrereq(){
+      this.loading = true;
+      this.$secured.get('/api/v1/prerequisites')
+        .then(response => { 
+          this.data = response.data
+          this.loading = false;
+        })
+        .catch(error => { 
+          console.log(error)
+          this.loading = false; 
+        });
+    },
     fetchSubjects(){
-       this.$secured.get('/api/v1/subjects')
+      this.$secured.get('/api/v1/subjects')
         .then(response => { 
           this.subjectsList = response.data
           this.prerequisitesList = response.data
@@ -222,18 +205,17 @@ export default {
         group_id: this.group_id,
         subject_prerequisite_id: this.prerequisite_id
       }})
-      .then(response=>{
+      .then(()=>{
         this.$toast.open({
             message: "Succesfully Created",
             type: "success",
             position: "top-right",
             duration: 2500,
           })
-        console.log(response.data)
         this.visible = false
-        this.fetchCurr()
+        this.fetchPrereq()
       })
-      .catch(error => {
+      .catch(()=> {
         this.$toast.open({
             message: "Something is Wrong",
             type: "warning",
@@ -241,7 +223,6 @@ export default {
             duration: 2500,
           });
           this.loading = false
-          console.log(error.response.data.code)
       })
       this.loading = false
       // this.subject_id = null

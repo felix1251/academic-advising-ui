@@ -11,6 +11,7 @@
     </a-button>
 
     <a-table
+      size = "small"
       bordered
       rowKey="id"
       :columns="columns"

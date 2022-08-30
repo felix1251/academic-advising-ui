@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column">
+  <div class="d-flex flex-column container-fluid py-4">
     <a-modal v-model:visible="visible" title="Student" centered>
       <div class="d-flex flex-column fs-6">
         <span><b>Name: </b> {{student_data.first_name}} 
@@ -7,8 +7,8 @@
           {{student_data.last_name}}
           {{student_data.suffix}}
         </span>
-        <span><b>College: </b> {{student_data.college_code}}</span>
-        <span><b>Course: </b> {{student_data.curriculum_code}}</span>
+        <span><b>College: </b> {{student_data.college_description}} ({{student_data.college_code}})</span>
+        <span><b>Course: </b> {{student_data.curriculum_description}} ({{student_data.curriculum_code}})</span>
       </div>
       <template #footer>
         <a-button
@@ -21,10 +21,26 @@
       </template>
     </a-modal>
     <div class="w-20 mb-2">
+      <h6 class="p-0">Academic Year</h6>
+      <select
+        v-model="academicYearId"
+        class="form-select p-2 bg-white border"
+        style="font-size: 17px"
+      >
+        <option
+          style="font-size: 18px"
+          v-for="option in academicYearList"
+          :value="option.id"
+          v-bind:key="option.id"
+        >
+          {{ option.from }} - {{ option.to }}
+        </option>
+      </select>
+    </div>
+    <div class="w-20 mb-2">
       <h6 class="p-0">Semester</h6>
       <select
         v-model="semester_id"
-        @change.prevent="onChangeSelectSemester"
         class="form-select p-2 bg-white border"
         style="font-size: 17px"
       >
@@ -40,12 +56,12 @@
     </div>
     <div class="w-20 mb-2">
       <h6 class="p-0">Student Id Number</h6>
-      <div class="d-flex flex-row">
-        <a-input v-model:value="id_number" type="number" />
-        <a-button @click.prevent="searchStudent">Search</a-button>
+      <div class="d-flex flex-row gap-2">
+        <a-input style="width: 200px" v-model:value="id_number" type="number" />
+        <a-button type="primary" @click.prevent="searchStudent">Search</a-button>
       </div>
     </div>
-    <div class="d-flex flex-row">
+    <div class="d-flex flex-row gap-3">
       <div class="w-50">
         <h6 class="p-0">Recommended Subjects</h6>
         <a-table
@@ -77,7 +93,8 @@
         >
         <template #actions="{ record }">
             <a-button
-              type="danger"
+              type="primary"
+              danger
               @click.prevent="unEnrollSubject(record.id)"
             >
               unenroll
@@ -106,6 +123,9 @@ export default {
       visible: false,
       semester_id: 1,
       id_number: null,
+      academicYearList: [],
+      academicYearId: null,
+      errMsg: "",
       semester: [
         { id: 1, desc: "1st semester" },
         { id: 2, desc: "2nd semester" },
@@ -164,14 +184,15 @@ export default {
     ...mapState(["currentUser"]),
   },
 
-  mounted: function () {},
-
+  mounted: function () {
+    this.fetchAcademicYear()
+  },  
   methods: {
-    fectRecom() {
+    fetchRecom() {
       this.$secured
         .get(
           "/api/v1/get_student_recommended_subjects?student_curriculum_id=" +
-            this.student_data.curriculum_id + "&semester="+this.semester_id+"&student_id="+this.student_data.id
+            this.student_data.curriculum_id + "&semester=" + this.semester_id+"&student_id="+this.student_data.id
         )
         .then((response) => {
           this.recomData = response.data;
@@ -180,9 +201,19 @@ export default {
           console.log(error);
         });
     },
+    fetchAcademicYear() {
+      this.$secured
+        .get("/api/v1/academic_years")
+        .then((response) => {
+          this.academicYearList = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     proceed() {
       this.loading = true;
-      this.fectRecom();
+      this.fetchRecom();
       this.fetchStudentSubjectEnrolled();
       this.visible = false;
       this.loading = false;
@@ -202,19 +233,32 @@ export default {
             enrolled_id: subject_id,
             sem: this.semester_id,
             datetime_enrolled: new Date(),
+            academic_year_id: this.academicYearId,
           },
         })
         .then((response) => {
           this.enroledData = response.data;
           this.fetchStudentSubjectEnrolled();
-          this.fectRecom();
-        });
+          this.fetchRecom();
+        })
+        .catch((error)=>{
+          console.log(error.response.data["academic_year"][0])
+          if (error.response.data && error.response.data["academic_year"][0]) {
+            this.errMsg = "Academic year " + error.response.data["academic_year"][0]
+          }
+          this.$toast.open({
+            message: this.errMsg,
+            type: "error",
+            position: "top-right",
+            duration: 2500,
+          });
+        })
     },
     unEnrollSubject(subject_id) {
       this.$secured
         .delete("/api/v1/enrollments/"+subject_id)
         .then(() => {
-          this.fectRecom();
+          this.fetchRecom();
           this.fetchStudentSubjectEnrolled();
         });
     },

@@ -15,6 +15,7 @@
       :data-source="data"
       :scroll="{ x: 600 }"
       :pagination="{ pageSize: 10 }"
+      size="small"
     >
       <template #prerequisites="{ record }">
         <a-button @click.prevent="showPrereqModal(record.subject_id)">
@@ -22,13 +23,12 @@
         </a-button>
       </template>
       <template #semester="{ record }">
-        <span>{{ordinal_suffix_of(record.semester)}}</span>
+        <span>{{ordinal_suffix_of(record.semester, 1)}}</span>
       </template>
       <template #year="{ record }">
-        <span>{{ordinal_suffix_of(record.year)}}</span>
+        <span>{{ordinal_suffix_of(record.year, 2)}}</span>
       </template>
     </a-table>
-
     <a-modal
       v-model:visible="visible"
       title="Create Recommendation"
@@ -263,7 +263,7 @@ export default {
       this.prereqModal = false;
       this.subjectPrequsiteList = [];
     },
-    ordinal_suffix_of(i) {
+    ordinal_suffix_of(i, type) {
       var j = i % 10,
         k = i % 100;
       if (j == 1 && k != 11) {
@@ -273,7 +273,11 @@ export default {
         return i + "nd";
       }
       if (j == 3 && k != 13) {
-        return i + "rd";
+        if(type == 1) {
+          return "Summer";
+        }else{
+          return i + "rd";
+        }
       }
       return i + "th";
     },

@@ -11,6 +11,7 @@
     </a-button>
 
     <a-table
+      size = "small"
       bordered
       rowKey="id"
       :columns="columns"
@@ -43,7 +44,6 @@
             size="large"
             placeholder="Enter College Description"
             v-model:value="description"
-            @keyup.enter="createCollege"
           />
         </div>
         <div class="mb-2">

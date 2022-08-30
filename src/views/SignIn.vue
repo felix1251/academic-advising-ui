@@ -48,7 +48,7 @@
                 >-->
                 <vmd-alert v-if="error" class="my-0 font-weight-light" color="warning">
                   <span class="text-sm">
-                   {{error}}
+                    {{error}}
                   </span>
                 </vmd-alert>
                 <div class="text-center">
@@ -59,6 +59,9 @@
                     fullWidth
                     >Sign in</vmd-button
                   >
+                </div>
+                <div class="d-flex w-100 justify-content-center mt-3">
+                  <a-radio-group :options="options" v-model:value="optionValue" />
                 </div>
                 <p class="mt-4 text-sm text-center">
                   Forget Password?
@@ -91,7 +94,14 @@ export default {
     return{
       password: "",
       username:"",
-      error: ""
+      error: "",
+      optionValue: 1,
+      requestName: "student_signin",
+      options: [
+        {value: 1, label: "Student"},
+        {value: 2, label: "Staff"},
+        {value: 3, label: "Admin"},
+      ]
     }
   },
   components: {
@@ -119,7 +129,14 @@ export default {
       // console.log(this.password, this.email)
     },
     signin () {
-      this.$plain.post('/admin_signin', { username: this.username, password: this.password })
+      if(this.optionValue == 1){
+        this.requestName = "student_signin"
+      }else if (this.optionValue == 2){
+        this.requestName = "staff_signin"
+      }else{
+        this.requestName = "admin_signin"
+      }
+      this.$plain.post(`/${this.requestName}`, { username: this.username, password: this.password })
         .then(response => {
           this.signinSuccessful(response)
           this.$toast.open({

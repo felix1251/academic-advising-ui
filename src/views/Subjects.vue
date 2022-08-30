@@ -8,8 +8,8 @@
       @click="showModal"
       >Create Subject
     </a-button>
-
-     <a-table
+    <a-table
+      size="small"
       bordered
       rowKey="id"
       :columns="columns"
@@ -239,37 +239,7 @@ export default {
     ...mapState(["currentUser"]),
   },
   mounted: function (){
-    this.loading = true;
     this.fetchSubject();
-    this.loading = false;
-    // this.$secured.get('/api/v1/subjects')
-    //     .then(response => { this.data = response.data})
-    //     .catch(error => { console.log(error) });
-
-    //     if (this.currentUser.role == "system_admin") {
-    //   const additionCol = {
-    //     title: "Operation",
-    //     dataIndex: "operation",
-    //     width: 155,
-    //     fixed: "right",
-    //     slots: {
-    //       customRender: "operation",
-    //     },
-    //   };
-    //   this.columns.push(additionCol);
-    //   this.$secured.get("/api/v1/roles")
-    //     .then((response) => {
-    //       this.roleSelection = response.data.data;
-    //       this.role = response.data.data[0];
-    //       this.filter = [...this.filter, ...this.roleSelection];
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }
-    // setTimeout(() => {
-    //   this.loading = false;
-    // }, 700)  
   },
   
   methods: {
@@ -284,12 +254,15 @@ export default {
       this.loading = false;
     },
     fetchSubject() {
+      this.loading = true;
       this.$secured
         .get("/api/v1/subjects")
         .then((response) => {
+          this.loading = false;
           this.data = response.data;
         })
         .catch((error) => {
+          this.loading = false;
           console.log(error);
         });
     },
@@ -314,7 +287,7 @@ export default {
         });
     },
     fetchDepartment(){
-       this.$secured.get("/api/v1/get_department_by_college_id?college_id="+ this.college_id)
+      this.$secured.get("/api/v1/get_department_by_college_id?college_id="+ this.college_id)
         .then(response => { this.departmentList = response.data})
         .catch(error => { console.log(error) })
     },
@@ -361,7 +334,7 @@ export default {
           })
         console.log(response.data)
         this.visible = false
-        this.fetchCurr()
+        this.fetchSubject()
       })
       .catch(error => {
         this.$toast.open({
