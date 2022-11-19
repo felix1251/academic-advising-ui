@@ -12,6 +12,7 @@ import VueLoading from 'vue-loading-overlay';
 import 'ant-design-vue/dist/antd.css';
 import 'vue-toast-notification/dist/theme-sugar.css'
 import 'vue-loading-overlay/dist/vue-loading.css';
+import "./assets/css/custom.css";
 
 import { plainAxiosInstance, securedAxiosInstance } from "@/backend/axios"
 

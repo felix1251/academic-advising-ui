@@ -17,6 +17,7 @@
       :columns="columns.filter(item => item.userType.includes(this.filterData))"
       :loading="loading"
       :data-source="data"
+      rowKey="id"
       :pagination="{ pageSize: 10 }"
       :scroll="{ x: 600 }"
     >
@@ -33,11 +34,12 @@
     :title="'CREATE NEW ' + filterData.toUpperCase()"
     v-model:visible="drawer"
     width="100%"
-    :zIndex="9999999999999"
+    :zIndex="9999"
     :destroyOnClose="true"
+    @close="closeDrawer"
   >
     <div class="d-flex justify-content-center">
-      <admin-form v-if="filterData == 'admin'"/>
+      <admin-form v-if="filterData == 'admin'" :closeDrawer="closeDrawer" :getUsers="getUsers"/>
     </div>
   </a-drawer>
 </template>
@@ -166,6 +168,9 @@ export default {
           });
           console.log(error);
         });
+    },
+    closeDrawer(){
+      this.drawer = false
     },
     openDrawer(){
       this.drawer = true
