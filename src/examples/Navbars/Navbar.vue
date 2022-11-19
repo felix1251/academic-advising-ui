@@ -29,7 +29,7 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <i class="material-icons cursor-pointer">
+              <i class="material-icons cursor-pointer" style="font-size: 25px">
                 account_circle
               </i>
             </a>
