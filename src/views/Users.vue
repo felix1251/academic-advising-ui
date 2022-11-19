@@ -18,11 +18,12 @@
       :loading="loading"
       :data-source="data"
       rowKey="id"
+      size="small"
       :pagination="{ pageSize: 10 }"
       :scroll="{ x: 600 }"
     >
       <template #actions>
-        <a-button type="primary">Edit</a-button>
+        <a-button size="small" type="primary">Edit</a-button>
       </template>
       <template #status="{ text }">
         <a-tag v-if="text" color="#87d068">Active</a-tag>
