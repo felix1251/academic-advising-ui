@@ -9,7 +9,6 @@
     >
       Create Department
     </a-button>
-
     <a-table
       size = "small"
       bordered
@@ -19,7 +18,6 @@
       :pagination="{ pageSize: 10 }"
       :scroll="{ x: 600 }"
     />
-
     <a-modal
       v-model:visible="visible"
       title="Create Department"

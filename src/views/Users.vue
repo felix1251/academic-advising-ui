@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid py-4" ref="load">
+  <div class="container-fluid py-1" ref="load">
     <div v-if="currentUser.role == 'system_admin'">
       <button
         v-if="!show && currentUser.role == 'system_admin'"
@@ -25,178 +25,26 @@
         v-model:value="filterData"
         style="width: 120px"
         :options="filter.map((item) => ({ value: item }))"
+        @change="filterChange"
       />
     </div>
     <a-table
       v-if="!show"
       bordered
-      rowKey="id"
-      :columns="columns"
+      :columns="columns.filter(item => item.userType.includes(this.filterData))"
       :loading="loading"
       :data-source="data"
-      sorter
-      :row-selection="{
-        selectedRowKeys: rowSelection,
-        onChange: onSelectChange,
-      }"
       :pagination="{ pageSize: 10 }"
-      :scroll="{ x: 800 }">
-      <template
-        v-if="currentUser.role == 'system_admin'"
-        #operation="{ record }"
-        >
-        <a-button
-          type="primary"
-          @click.prevent="editUser(record.id)"
-          shape="round"
-          size="small"
-          >Edit</a-button
-        >
-        {{ " " }}
-        <a-button
-          type="primary"
-          danger
-          @click.prevent="deleteUser(record.id)"
-          shape="round"
-          size="small"
-          >Delete</a-button
-        >
+      :scroll="{ x: 600 }"
+    >
+      <template #actions>
+        <a-button type="primary">Edit</a-button>
       </template>
-      <template #tags="{ record }">
-        <span>
-          <a-tag
-            class="cursor-pointer"
-            v-if="record.college_code"
-            :color="strToColour(record.college_code)"
-          >
-            {{ record.college_code.toUpperCase() }}
-          </a-tag>
-          <a-tag
-            class="cursor-pointer"
-            v-if="record.curriculum_code"
-            :color="strToColour(record.curriculum_code)"
-          >
-            {{record.curriculum_code.toUpperCase()}}
-          </a-tag>
-          <a-tag
-            class="cursor-pointer"
-            v-if="record.college_code == null && record.curriculum_code == null"
-             :color="strToColour(record.role)"
-            >
-            All Access
-          </a-tag>
-        </span>
-      </template>
-      <template #role="{ record }">
-        <a-tag :color="strToColour(record.role)">
-          {{ record.role.toUpperCase().replace("_", " ") }}
-        </a-tag>
+      <template #status="{ text }">
+        <a-tag v-if="text" color="#87d068">Active</a-tag>
+        <a-tag v-else color="#FF0000">Inactive</a-tag>
       </template>
     </a-table>
-    <div v-else class="m-2" style="width: 350px">
-      <form @submit.prevent="createUser">
-        <div class="row mb-1">
-          <h6 class="p-0">Email</h6>
-          <a-input
-            type="email"
-            size="large"
-            placeholder="Enter email"
-            v-model:value="email"
-          />
-        </div>
-        <div class="row mb-1">
-          <h6 class="p-0">Fullname</h6>
-          <a-input
-            size="large"
-            placeholder="Enter fullname"
-            v-model:value="fullname"
-          />
-        </div>
-        <div class="row mb-1">
-          <h6 class="p-0">Password</h6>
-          <a-input-password
-            size="large"
-            placeholder="Enter password"
-            v-model:value="password"
-          />
-        </div>
-        <div class="row mb-1">
-          <h6 class="p-0">Password Confirmation</h6>
-          <a-input-password
-            size="large"
-            placeholder="Confirm password"
-            v-model:value="password_confirmation"
-          />
-        </div>
-        <div class="row mb-1">
-          <h6 class="p-0">Select Account type</h6>
-          <select
-            v-model="role"
-            @change="onChangeRole"
-            class="form-select p-2 bg-white"
-            style="font-size: 17px"
-          >
-            <option
-              style="font-size: 18px"
-              v-for="option in roleSelection"
-              :value="option"
-              v-bind:key="option"
-            >
-              {{ option }}
-            </option>
-          </select>
-        </div>
-         <div class="row mb-1" v-show="role == 'student'">
-          <h6 class="p-0">Id number</h6>
-          <a-input
-            type="number"
-            size="large"
-            placeholder="Enter Id Number"
-            v-model:value="id_number"
-          />
-        </div>
-        <div
-          v-show="role == 'student' || role == 'dean' || role == 'adviser'"
-          class="row mb-1"
-        >
-          <h6 class="p-0">Select College</h6>
-          <select
-            v-model="college_id"
-            @change="onChangeCollege"
-            class="form-select p-2 bg-white"
-            style="font-size: 17px"
-          >
-            <option
-              style="font-size: 18px"
-              v-for="option in collegeList"
-              :value="option.id"
-              v-bind:key="option.id"
-            >
-              {{ option.code }}
-            </option>
-          </select>
-        </div>
-        <div v-show="role == 'student' || role == 'adviser'" class="row mb-1">
-          <h6 class="p-0">Select Curriculum</h6>
-          <select
-            v-model="curriculum_id"
-            @change="onChangeCurriculum"
-            class="form-select p-2 bg-white"
-            style="font-size: 17px"
-          >
-            <option
-              style="font-size: 18px"
-              v-for="option in curriculumList"
-              :value="option.id"
-              v-bind:key="option.id"
-            >
-              {{ option.code }}
-            </option>
-          </select>
-        </div>
-        <button class="btn btn-success w-100 mt-4">create</button>
-      </form>
-    </div>
   </div>
 </template>
 
@@ -222,132 +70,81 @@ export default {
       college_id: 0,
       curriculum_id: 0,
       show: false,
-      filter: ["All"],
-      filterData: "All",
+      filter: ["admins", "staffs", "students"],
+      filterData: "admins",
       id_number: null,
       columns: [
         {
-          title: "User ID",
-          dataIndex: "id",
-          width: 100,
-        },
-        {
-          title: "Email",
-          dataIndex: "email",
-          width: 200,
-        },
-        {
-          title: "Name",
-          dataIndex: "fullname",
-          width: 200,
-        },
-        {
-          title: "Acoount Type",
+          title: "First Name",
+          dataIndex: "first_name",
           width: 150,
-          slots: {
-            customRender: "role",
-          },
+          ellipsis: true,
+          userType: ["admins", "staffs", "students"]
         },
         {
-          title: "Relation",
-          width: 250,
+          title: "Middle Name",
+          dataIndex: "middle_name",
+          width: 150,
+          ellipsis: true,
+          userType: ["admins", "staffs", "students"]
+        },
+        {
+          title: "Last Name",
+          dataIndex: "last_name",
+          width: 150,
+          ellipsis: true,
+          userType: ["admins", "staffs", "students"]
+        },
+        {
+          title: "Gender",
+          dataIndex: "gender",
+          width: 60,
+          userType: ["admins", "staffs", "students"]
+        },
+        {
+          title: "Suffix",
+          dataIndex: "suffix",
+          width: 50,
+          userType: ["admins", "staffs", "students"]
+        },
+        {
+          title: "Status",
+          dataIndex: "status",
+          width: 60,
           slots: {
-            customRender: "tags",
+            customRender: 'status',
           },
+          userType: ["admins", "staffs", "students"]
+        },
+        {
+          title: "Curriculum",
+          dataIndex: "curriculum",
+          width: 100,
+          userType: ["students", "staffs"]
+        },
+        {
+          title: "College",
+          dataIndex: "college",
+          width: 100,
+          userType: ["students", "staffs"]
+        },
+        {
+          title: "Actions",
+          width: 80,
+          slots: {
+            customRender: 'actions',
+          },
+          userType: ["admins", "staffs", "students"]
         },
       ],
     };
   },
-  watch: {
-    filterData(value) {
-      if (value != "All") {
-        var param = "?role=" + value;
-        this.fetch(param);
-      } else {
-        this.fetch("");
-      }
-    },
-  },
   mounted: function () {
-    this.loading = true;
-    this.$secured
-      .get("/api/v1/users")
-      .then((response) => {
-        this.data = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    if (this.currentUser.role == "system_admin") {
-      const additionCol = {
-        title: "Operation",
-        dataIndex: "operation",
-        width: 155,
-        fixed: "right",
-        slots: {
-          customRender: "operation",
-        },
-      };
-      this.columns.push(additionCol);
-      this.$secured
-        .get("/api/v1/roles")
-        .then((response) => {
-          this.roleSelection = response.data.data;
-          this.role = response.data.data[0];
-          this.filter = [...this.filter, ...this.roleSelection];
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-    setTimeout(() => {
-      this.loading = false;
-    }, 700)  
+    this.getUsers()
   },
   methods: {
     createUser() {
-      const role = this.role;
       var dataToSend = {};
-      if (role == "student") {
-        dataToSend = {
-          email: this.email,
-          password: this.password,
-          password_confirmation: this.password_confirmation,
-          fullname: this.fullname,
-          role: this.role,
-          curriculum_id: this.curriculum_id,
-          college_id: this.college_id,
-          id_number: this.id_number
-        };
-      } else if (role == "adviser") {
-        dataToSend = {
-          email: this.email,
-          password: this.password,
-          password_confirmation: this.password_confirmation,
-          fullname: this.fullname,
-          role: this.role,
-          curriculum_id: this.curriculum_id,
-          college_id: this.college_id,
-        };
-      }
-       else if (role == "dean") {
-        dataToSend = {
-          email: this.email,
-          password: this.password,
-          password_confirmation: this.password_confirmation,
-          fullname: this.fullname,
-          role: this.role,
-          college_id: this.college_id,
-        };
-      } else {
-        dataToSend = {
-          email: this.email,
-          password: this.password,
-          password_confirmation: this.password_confirmation,
-          fullname: this.fullname,
-          role: this.role,
-        };
-      }
       this.$secured
         .post("/api/v1/users", dataToSend)
         .then((response) => {
@@ -367,8 +164,7 @@ export default {
           } else {
             errorMessage = error.response.data.email[0];
           }
-          this.$toast.open({
-            message: errorMessage,
+          this.$toast.open({ message: errorMessage,
             type: "warning",
             position: "top-right",
             duration: 2500,
@@ -376,37 +172,34 @@ export default {
           console.log(error);
         });
     },
-    fetch(param) {
+    filterChange(value){
+      this.filterData = value
+      this.getUsers()
+    },
+    getUsers() {
       this.loading = true;
-      this.$secured
-        .get("/api/v1/users" + param)
+      this.$secured.get("/api/v1/"+this.filterData)
         .then((response) => {
           this.data = response.data;
         })
         .catch((error) => {
           console.log(error);
         });
-
-      setTimeout(() => {
-        this.loading = false;
-      }, 500)  
-    },
-    onChangeRole(event) {
-      this.role = event.target.value;
+      this.loading = false;
     },
     onChangeCurriculum(event) {
       this.curriculum_id = event.target.value;
     },
     fetchCollege(){
-       this.$secured.get('/api/v1/colleges')
+      this.$secured.get('/api/v1/colleges')
         .then(response => { this.collegeList = response.data})
         .catch(error => { console.log(error) })
     },
       fetchCurriculum(){
         this.$secured.get("/api/v1/get_curriculum_by_college_id?college_id="+ this.college_id)
-         .then(response => { this.curriculumList = response.data})
-         .catch(error => { console.log(error) })
-     },
+        .then(response => { this.curriculumList = response.data})
+        .catch(error => { console.log(error) })
+    },
     onChangeCollege(event) {
       this.college_id = event.target.value;
       this.fetchCurriculum()
