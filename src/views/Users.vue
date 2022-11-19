@@ -1,35 +1,18 @@
 <template>
   <div class="container-fluid py-1" ref="load">
-    <div v-if="currentUser.role == 'system_admin'">
-      <button
-        v-if="!show && currentUser.role == 'system_admin'"
-        type="button"
-        class="btn btn-success"
-        @click.prevent="toggleOpen"
-      >
-        create user
-      </button>
-      <button
-        v-else
-        type="button"
-        class="btn btn-warning d-flex justify-content-center align-items-center"
-        @click.prevent="toggleClose"
-      >
-        <i class="fas fa-angle-double-left" style="font-size: 20px"></i> &nbsp;
-        Back to user view
-      </button>
-    </div>
-    <div v-if="!show" class="mb-2">
-      <h6 class="p-0">Filter by</h6>
-      <a-select
-        v-model:value="filterData"
-        style="width: 120px"
-        :options="filter.map((item) => ({ value: item }))"
-        @change="filterChange"
-      />
+    <div class="mb-2 d-flex justify-content-between">
+      <div class="d-flex gap-2 align-items-center">
+        <h6 class="p-0 m-0">Filter by</h6>
+        <a-select
+          v-model:value="filterData"
+          style="width: 120px"
+          :options="filter.map((item) => ({ value: item }))"
+          @change="filterChange"
+        />
+      </div>
+      <a-button @click.prevent="openDrawer" type="primary">Create new {{filterData}}</a-button>
     </div>
     <a-table
-      v-if="!show"
       bordered
       :columns="columns.filter(item => item.userType.includes(this.filterData))"
       :loading="loading"
@@ -46,17 +29,30 @@
       </template>
     </a-table>
   </div>
+  <a-drawer
+    :title="'CREATE NEW ' + filterData.toUpperCase()"
+    v-model:visible="drawer"
+    width="100%"
+    :zIndex="9999999999999"
+    :destroyOnClose="true"
+  >
+    <div class="d-flex justify-content-center">
+      <admin-form v-if="filterData == 'admin'"/>
+    </div>
+  </a-drawer>
 </template>
-
 <script>
+
 import { mapState } from "vuex";
 import stringToColour from "../components/stringToColor";
+import AdminForm from "@/views/components/Users/AdminForm.vue";
 
 export default {
   name: "users",
   data() {
     return {
       data: [],
+      drawer: false,
       loading: false,
       email: "",
       password: "",
@@ -69,9 +65,8 @@ export default {
       fullname: "",
       college_id: 0,
       curriculum_id: 0,
-      show: false,
-      filter: ["admins", "staffs", "students"],
-      filterData: "admins",
+      filter: ["admin", "staff", "student"],
+      filterData: "admin",
       id_number: null,
       columns: [
         {
@@ -79,62 +74,62 @@ export default {
           dataIndex: "first_name",
           width: 150,
           ellipsis: true,
-          userType: ["admins", "staffs", "students"]
+          userType: ["admin", "staff", "student"]
         },
         {
           title: "Middle Name",
           dataIndex: "middle_name",
           width: 150,
           ellipsis: true,
-          userType: ["admins", "staffs", "students"]
+          userType: ["admin", "staff", "student"]
         },
         {
           title: "Last Name",
           dataIndex: "last_name",
           width: 150,
           ellipsis: true,
-          userType: ["admins", "staffs", "students"]
-        },
-        {
-          title: "Gender",
-          dataIndex: "gender",
-          width: 60,
-          userType: ["admins", "staffs", "students"]
+          userType: ["admin", "staff", "student"]
         },
         {
           title: "Suffix",
           dataIndex: "suffix",
-          width: 50,
-          userType: ["admins", "staffs", "students"]
+          width: 80,
+          userType: ["admin", "staff", "student"]
+        },
+        {
+          title: "Gender",
+          dataIndex: "gender",
+          width: 80,
+          userType: ["admin", "staff", "student"]
         },
         {
           title: "Status",
           dataIndex: "status",
-          width: 60,
+          width: 80,
           slots: {
             customRender: 'status',
           },
-          userType: ["admins", "staffs", "students"]
+          userType: ["admin", "staff", "student"]
         },
         {
           title: "Curriculum",
           dataIndex: "curriculum",
           width: 100,
-          userType: ["students", "staffs"]
+          userType: ["student", "staff"]
         },
         {
           title: "College",
           dataIndex: "college",
           width: 100,
-          userType: ["students", "staffs"]
+          userType: ["student", "staff"]
         },
         {
           title: "Actions",
-          width: 80,
+          width: 100,
           slots: {
             customRender: 'actions',
           },
-          userType: ["admins", "staffs", "students"]
+          userType: ["admin", "staff", "student"]
         },
       ],
     };
@@ -142,6 +137,7 @@ export default {
   mounted: function () {
     this.getUsers()
   },
+
   methods: {
     createUser() {
       var dataToSend = {};
@@ -149,7 +145,6 @@ export default {
         .post("/api/v1/users", dataToSend)
         .then((response) => {
           this.data.push(response.data);
-          this.show = false
           this.$toast.open({
             message: "Successfully Created",
             type: "success",
@@ -172,13 +167,16 @@ export default {
           console.log(error);
         });
     },
+    openDrawer(){
+      this.drawer = true
+    },
     filterChange(value){
       this.filterData = value
       this.getUsers()
     },
     getUsers() {
       this.loading = true;
-      this.$secured.get("/api/v1/"+this.filterData)
+      this.$secured.get("/api/v1/"+this.filterData+"s")
         .then((response) => {
           this.data = response.data;
         })
@@ -205,7 +203,6 @@ export default {
       this.fetchCurriculum()
     },
     toggleOpen() {
-      this.show = true;
       this.fetchCollege()
       // if (this.curriculumList.length == 0 && this.collegeList.length == 0) {
       //   this.$secured
@@ -228,9 +225,6 @@ export default {
       //     });
       // }
     },
-    toggleClose() {
-      this.show = false;
-    },
     deleteUser(id) {
       console.log(id);
     },
@@ -247,5 +241,8 @@ export default {
   computed: {
     ...mapState(["currentUser"]),
   },
+  components: {
+    AdminForm,
+  }
 };
 </script>
