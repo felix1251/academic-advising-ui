@@ -45,6 +45,7 @@
     <div class="d-flex justify-content-center">
       <admin-form v-if="filterData == 'admin'" :closeDrawer="closeDrawer" :getUsers="getUsers"/>
       <staff-form v-if="filterData == 'staff'" :closeDrawer="closeDrawer" :getUsers="getUsers"/>
+      <student-form v-if="filterData == 'student'" :closeDrawer="closeDrawer" :getUsers="getUsers"/>
     </div>
   </a-drawer>
 </template>
@@ -54,6 +55,7 @@ import { mapState } from "vuex";
 import stringToColour from "../components/stringToColor";
 import AdminForm from "@/views/components/Users/AdminForm.vue";
 import StaffForm from "@/views/components/Users/StaffForm.vue";
+import StudentForm from "@/views/components/Users/StudentForm.vue";
 
 export default {
   name: "users",
@@ -129,7 +131,19 @@ export default {
           title: "Department",
           dataIndex: "department_code",
           width: 100,
-          userType: ["student", "staff"]
+          userType: ["staff"]
+        },
+        {
+          title: "Curriculum",
+          dataIndex: "curriculum_code",
+          width: 100,
+          userType: ["student"]
+        },
+        {
+          title: "Adviser",
+          dataIndex: "adviser_name",
+          width: 100,
+          userType: ["student"]
         },
         {
           title: "Actions",
@@ -255,6 +269,7 @@ export default {
   components: {
     AdminForm,
     StaffForm,
+    StudentForm,
   }
 };
 </script>
