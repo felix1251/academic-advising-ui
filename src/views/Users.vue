@@ -2,7 +2,7 @@
   <div class="container-fluid py-1" ref="load">
     <div class="mb-2 d-flex justify-content-between">
       <div class="d-flex gap-2 align-items-center">
-        <h6 class="p-0 m-0">Filter by</h6>
+        <span class="p-0 m-0 text-bold">User type</span>
         <a-select
           v-model:value="filterData"
           style="width: 120px"
@@ -52,7 +52,6 @@
 <script>
 
 import { mapState } from "vuex";
-import stringToColour from "../components/stringToColor";
 import AdminForm from "@/views/components/Users/AdminForm.vue";
 import StaffForm from "@/views/components/Users/StaffForm.vue";
 import StudentForm from "@/views/components/Users/StudentForm.vue";
@@ -233,29 +232,6 @@ export default {
       this.college_id = event.target.value;
       this.fetchCurriculum()
     },
-    toggleOpen() {
-      this.fetchCollege()
-      // if (this.curriculumList.length == 0 && this.collegeList.length == 0) {
-      //   this.$secured
-      //     .get("/api/v1/curriculums")
-      //     .then((response) => {
-      //       this.curriculumList = response.data;
-      //       this.curriculum_id = response.data[0].id;
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //     });
-      //   this.$secured
-      //     .get("/api/v1/colleges")
-      //     .then((response) => {
-      //       this.collegeList = response.data;
-      //       this.college_id = response.data[0].id;
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //     });
-      // }
-    },
     deleteUser(id) {
       console.log(id);
     },
@@ -265,9 +241,6 @@ export default {
     onSelectChange(value) {
       this.rowSelection = value;
     },
-    strToColour(str) {
-      return stringToColour(str)
-    }
   },
   computed: {
     ...mapState(["currentUser"]),
