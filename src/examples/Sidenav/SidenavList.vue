@@ -30,7 +30,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -43,7 +43,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -56,7 +56,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -69,7 +69,7 @@
           </template>
         </sidenav-collapse>
       </li>
-       <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -82,7 +82,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -95,7 +95,7 @@
           </template>
         </sidenav-collapse>
       </li>
-       <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -108,7 +108,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -121,7 +121,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('F') || currentUser.account_type.includes('S')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -134,7 +134,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" v-if="currentUser.account_type.includes('A')">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -147,37 +147,12 @@
           </template>
         </sidenav-collapse>
       </li>
-      <!--<li class="nav-item">
-        <sidenav-collapse
-          url="#"
-          :aria-controls="''"
-          v-bind:collapse="false"
-          collapseRef="sign-in"
-          navText="SignIn"
-        >
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">login</i>
-          </template>
-        </sidenav-collapse>
-      </li>
-      <li class="nav-item">
-        <sidenav-collapse
-          url="#"
-          :aria-controls="''"
-          v-bind:collapse="false"
-          collapseRef="sign-up"
-          navText="SignUp"
-        >
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">assignment</i>
-          </template>
-        </sidenav-collapse>
-      </li>-->
     </ul>
   </div>
 </template>
 <script>
 import SidenavCollapse from "./SidenavCollapse.vue";
+import { mapState } from 'vuex'
 
 export default {
   name: "SidenavList",
@@ -191,6 +166,7 @@ export default {
       isActive: "active"
     };
   },
+  computed: mapState(['currentUser']),
   components: {
     SidenavCollapse
   }

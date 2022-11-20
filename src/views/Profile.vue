@@ -21,8 +21,11 @@
         </div>
         <div class="col-auto my-auto">
           <div class="h-100">
-            <h5 class="mb-1">{{email}}</h5>
-            <p class="mb-0 font-weight-normal text-sm">{{role}}</p>
+            <h5 class="mb-1">{{this.$store.state.currentUser.details.last_name}}, {{this.$store.state.currentUser.details.first_name}} </h5>
+            <p v-if="this.$store.state.currentUser.account_type[0] == 'A'" class="mb-0 font-weight-normal text-sm">Admin</p>
+            <p v-if="this.$store.state.currentUser.account_type[0] == 'F'" class="mb-0 font-weight-normal text-sm">Staff</p>
+            <p v-if="this.$store.state.currentUser.account_type[0] == 'S'" class="mb-0 font-weight-normal text-sm">Student</p>
+            <p v-if="this.$store.state.currentUser.account_type[1] == 'D'" class="mb-0 font-weight-normal text-sm">Dean</p>
           </div>
         </div>
         <div
@@ -30,7 +33,7 @@
         >
         </div>
       </div>
-      <div class="row">
+      <div v-if="this.$store.state.currentUser.account_type[0] == 'A' || this.$store.state.currentUser.account_type[0] == 'S'" class="row">
         <div class="mt-3 row">
           <div class="mt-4 col-12 col-xl-4 mt-xl-0">
             <div class="card card-plain h-100">

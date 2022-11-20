@@ -127,6 +127,12 @@ export default {
           userType: ["admin", "staff", "student"]
         },
         {
+          title: "Username",
+          dataIndex: "username",
+          width: 100,
+          userType: ["admin", "staff", "student"]
+        },
+        {
           title: "College",
           dataIndex: "college_code",
           width: 100,
