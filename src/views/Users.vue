@@ -80,6 +80,12 @@ export default {
       id_number: null,
       columns: [
         {
+          title: "ID No.",
+          dataIndex: "id_number",
+          width: 100,
+          userType: ["student"]
+        },
+        {
           title: "First Name",
           dataIndex: "first_name",
           width: 150,
