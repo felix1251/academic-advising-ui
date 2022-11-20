@@ -12,7 +12,7 @@
       </a>
     </div>
     <hr class="horizontal light mt-0 mb-2" />
-    <sidenav-list />
+    <sidenav-list/>
   </aside>
 </template>
 <script>
@@ -29,7 +29,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["isRTL", "sidebarType", "isDarkMode"]),
+    ...mapState(["isRTL", "sidebarType", "isDarkMode", "signedIn"]),
   },
 };
 </script>

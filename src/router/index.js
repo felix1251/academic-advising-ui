@@ -73,13 +73,13 @@ const routes = [
     path: "/sign-in",
     name: "SignIn",
     component: SignIn,
-    meta: { auth: false }
+    meta: { auth: false , userType: []}
   },
   {
     path: "/sign-up",
     name: "SignUp",
     component: SignUp,
-    meta: { auth: false }
+    meta: { auth: false, userType: []}
   },
   {
     path: "/:catchAll(.*)",
@@ -113,7 +113,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const signedIn = store.getters.isUserSignedIn;
-  const accountType = store.state.currentUser.account_type[0]
+  const accountType = store.state.currentUser.account_type[0] || ""
   if ( 'auth' in to.meta && to.meta.auth && !signedIn) {
       next('/sign-in');
   } else if ( 'auth' in to.meta && !to.meta.auth && signedIn) {

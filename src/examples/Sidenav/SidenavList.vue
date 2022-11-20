@@ -166,7 +166,7 @@ export default {
       isActive: "active"
     };
   },
-  computed: mapState(['currentUser']),
+  computed: mapState(['currentUser', 'signedIn']),
   components: {
     SidenavCollapse
   }

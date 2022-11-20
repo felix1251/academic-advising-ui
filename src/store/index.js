@@ -3,7 +3,7 @@ import createPersistedState from 'vuex-persistedstate';
 
 export default createStore({
   state: {
-    currentUser: {},
+    currentUser: { account_type: [] },
     csrf: null,
     signedIn: false,
     hideConfigButton: false,
@@ -32,7 +32,7 @@ export default createStore({
       state.csrf = csrf
     },
     unsetCurrentUser (state) {
-      state.currentUser = {}
+      state.currentUser = { account_type: []}
       state.signedIn = false
       state.csrf = null
     },
