@@ -25,7 +25,7 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
-    meta: { auth: true, userType: ['A'] }
+    meta: { auth: true, userType: ['A', 'S', 'F'] }
   },
   {
     path: "/users",
@@ -73,13 +73,13 @@ const routes = [
     path: "/sign-in",
     name: "SignIn",
     component: SignIn,
-    meta: { auth: false , userType: []}
+    meta: { auth: false}
   },
   {
     path: "/sign-up",
     name: "SignUp",
     component: SignUp,
-    meta: { auth: false, userType: []}
+    meta: { auth: false}
   },
   {
     path: "/:catchAll(.*)",
@@ -118,7 +118,7 @@ router.beforeEach((to, from, next) => {
       next('/sign-in');
   } else if ( 'auth' in to.meta && !to.meta.auth && signedIn) {
       next('/dashboard');
-  } else if(signedIn && !to.meta.userType.includes(accountType)){
+  } else if(signedIn && to.meta.auth && !to.meta.userType.includes(accountType)){
     next(from.path);
   } else {
       next();

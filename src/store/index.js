@@ -32,7 +32,7 @@ export default createStore({
       state.csrf = csrf
     },
     unsetCurrentUser (state) {
-      state.currentUser = { account_type: []}
+      state.currentUser = { account_type: [] }
       state.signedIn = false
       state.csrf = null
     },
