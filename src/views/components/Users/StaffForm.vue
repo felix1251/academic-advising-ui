@@ -21,14 +21,38 @@
           <a-input v-model:value="form.suffix" placeholder="Enter suffix"/>
         </a-form-item>
       </a-col>
-    </a-row>
-    <a-row>
       <a-col>
         <a-form-item label="Gender" name="gender">
           <a-radio-group v-model:value="form.gender">
             <a-radio value="male">Male</a-radio>
             <a-radio value="female">Female</a-radio>
           </a-radio-group>
+        </a-form-item>
+      </a-col>
+    </a-row>
+    <a-row :gutter="13">
+      <a-col>
+        <a-form-item label="College" name="college_id">
+          <a-select
+            v-model:value="form.college_id"
+            style="width: 300px"
+            placeholder="Select college"
+            :options="collegeData.map(item => ({value: item.id, label: item.code}))"
+            :getPopupContainer="trigger => trigger.parentNode"
+            @focus="getCollegeData"
+          />
+        </a-form-item>
+      </a-col>
+      <a-col>
+        <a-form-item label="Department" name="department_id">
+          <a-select
+            v-model:value="form.department_id"
+            style="width: 300px"
+            placeholder="Select curriculum"
+            :options="departmentData.map(item => ({value: item.id, label: item.code}))"
+            :getPopupContainer="trigger => trigger.parentNode"
+            @focus="getDepartmentData"
+          />
         </a-form-item>
       </a-col>
     </a-row>
@@ -51,7 +75,7 @@
     </a-row>
     <a-row>
       <a-form-item>
-        <a-button type="primary" @click="createAdmin">Create</a-button>
+        <a-button type="primary" @click="createStaff">Create</a-button>
         <a-button @click.prevent="closeDrawer" style="margin-left: 10px">Cancel</a-button>
       </a-form-item>
     </a-row>
@@ -69,6 +93,8 @@ export default {
         suffix: "",
         gender: "male",
         username: null,
+        department_id: null,
+        college_id: null,
         password: null,
         password_confirmation: null,
       },
@@ -76,26 +102,29 @@ export default {
         first_name: [{ required: true, message: 'required' }],
         middle_name: [{required: true, message: 'required'}],
         last_name: [{ required: true, message: 'required' }],
-        suffix: [{ required: true, message: 'required' }],
         gender: [{ required: true, message: 'required' }],
         password: [{ required: true, message: 'required' }],
         password_confirmation: [{ required: true, message: 'required' }],
         username: [{ required: true, message: 'required' }],
-      }
+        department_id: [{ required: true, message: 'required' }],
+        college_id: [{ required: true, message: 'required' }],
+      },
+      departmentData: [],
+      collegeData: [],
     };
   },
   methods: {
-    createAdmin(){
+    createStaff(){
       this.$refs.formRef.validate()
         .then(()=>{
-          this.$secured.post("/api/v1/admins", { admin: this.form })
+          this.$secured.post("/api/v1/staffs", { staff: this.form })
             .then(() => {
               this.closeDrawer()
               this.getUsers()
-              this.$toast.open({ message: "Admin successfully created", type: "success", position: "top-right", duration: 2500});
+              this.$toast.open({ message: "Staff successfully created", type: "success", position: "top-right", duration: 2500});
             })
             .catch(()=>{
-              this.$toast.open({ message: "Can't create admin something is wrong", type: "error", position: "top-right", duration: 2500});
+              this.$toast.open({ message: "Can't create staff something is wrong", type: "error", position: "top-right", duration: 2500});
               return
             })
         })
@@ -105,6 +134,22 @@ export default {
           this.$toast.open({ message: msg, type: "error", position: "top-right", duration: 2500});
         })
     
+    },
+    getDepartmentData(focus){
+      if(!focus) return
+      this.$secured.get("/api/v1/departments")
+        .then((response) => {
+          this.departmentData = response.data
+        })
+        .catch(()=>{})
+    },
+    getCollegeData(focus){
+      if(!focus) return
+      this.$secured.get("/api/v1/colleges")
+        .then((response) => {
+          this.collegeData = response.data
+        })
+        .catch(()=>{})
     }
   },
   props: {

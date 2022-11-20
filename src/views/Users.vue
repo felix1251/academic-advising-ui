@@ -22,12 +22,15 @@
       :pagination="{ pageSize: 10 }"
       :scroll="{ x: 600 }"
     >
-      <template #actions>
-        <a-button size="small" type="primary">Edit</a-button>
-      </template>
       <template #status="{ text }">
         <a-tag v-if="text" color="#87d068">Active</a-tag>
         <a-tag v-else color="#FF0000">Inactive</a-tag>
+      </template>
+      <template #department>
+        <a-button size="small" type="primary">Edit</a-button>
+      </template>
+      <template #actions>
+        <a-button size="small" type="primary">Edit</a-button>
       </template>
     </a-table>
   </div>
@@ -41,6 +44,7 @@
   >
     <div class="d-flex justify-content-center">
       <admin-form v-if="filterData == 'admin'" :closeDrawer="closeDrawer" :getUsers="getUsers"/>
+      <staff-form v-if="filterData == 'staff'" :closeDrawer="closeDrawer" :getUsers="getUsers"/>
     </div>
   </a-drawer>
 </template>
@@ -49,6 +53,7 @@
 import { mapState } from "vuex";
 import stringToColour from "../components/stringToColor";
 import AdminForm from "@/views/components/Users/AdminForm.vue";
+import StaffForm from "@/views/components/Users/StaffForm.vue";
 
 export default {
   name: "users",
@@ -115,14 +120,14 @@ export default {
           userType: ["admin", "staff", "student"]
         },
         {
-          title: "Curriculum",
-          dataIndex: "curriculum",
+          title: "College",
+          dataIndex: "college_code",
           width: 100,
           userType: ["student", "staff"]
         },
         {
-          title: "College",
-          dataIndex: "college",
+          title: "Department",
+          dataIndex: "department_code",
           width: 100,
           userType: ["student", "staff"]
         },
@@ -249,6 +254,7 @@ export default {
   },
   components: {
     AdminForm,
+    StaffForm,
   }
 };
 </script>

@@ -30,17 +30,16 @@
 
           <a-input
             size="large"
-            placeholder="Enter College Code"
+            placeholder="Enter Deparment Code"
             v-model:value="code"
           />
         </div>
 
         <div class="mb-2">
           <h6 class="p-0">Description</h6>
-
           <a-input
             size="large"
-            placeholder="Enter College Description"
+            placeholder="Enter Department Description"
             v-model:value="description"
           />
         </div>
