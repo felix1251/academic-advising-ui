@@ -33,7 +33,7 @@
         >
         </div>
       </div>
-      <div v-if="this.$store.state.currentUser.account_type[0] == 'A' || this.$store.state.currentUser.account_type[0] == 'S'" class="row">
+      <div v-if="this.$store.state.currentUser.account_type[0] == 'F' || this.$store.state.currentUser.account_type[0] == 'S'" class="row">
         <div class="mt-3 row">
           <div class="mt-4 col-12 col-xl-4 mt-xl-0">
             <div class="card card-plain h-100">
