@@ -73,6 +73,18 @@
           </a-table>
         </div>
       </div>
+      <div class="m-0 p-1">
+        <h6 class="p-0">Students</h6>
+        <a-table
+            :scroll="{ y: 600 }"
+            bordered
+            :columns="columns"
+            size="small"
+            :data-source="item.data"
+            :pagination="{ pageSize: 10 }"
+          >
+          </a-table>
+      </div>
   </div>
 </template>
 
@@ -107,18 +119,32 @@ export default {
           width: 50,
         },
       ],
+      studColumns: [
+        {
+          title: "First Name",
+          dataIndex: "first_name",
+          width: 60,
+        },
+        {
+          title: "Midddle Init",
+          dataIndex: "middle_name",
+          width: 50,
+        },
+        {
+          title: "Last Name",
+          dataIndex: "last name",
+          width: 50,
+        },
+      ]
     };
   },
-
   computed: {
     ...mapState(["currentUser"]),
   },
-  mounted: function () {
-    this.loading = true;
-    this.fetchAdvising();
-    this.loading = false;
+  created() {
+    if(this.currentUser.account_type.includes('S')) this.fetchAdvising()
+    if(this.currentUser.account_type.includes('F')) this.fetchAdvising()
   },
-
   methods: {
     onSelectChange: function(value) {
       this.selected_rows = value;

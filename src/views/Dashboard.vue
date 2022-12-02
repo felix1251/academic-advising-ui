@@ -47,6 +47,28 @@
               }"
             />
           </div>
+          <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4" v-if="currentUser.account_type.includes('F')">
+            <mini-statistics-card
+              :title="{ text: 'Advising', value: count.studs_count }"
+              detail="Over all Users"
+              :icon="{
+                name: 'person',
+                color: 'text-white',
+                background: 'success',
+              }"
+            />
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4" v-if="currentUser.account_type.includes('S')">
+            <mini-statistics-card
+              :title="{ text: 'Units Remaining', value: 0 }"
+              detail="Over all Users"
+              :icon="{
+                name: 'person',
+                color: 'text-white',
+                background: 'success',
+              }"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -81,14 +103,23 @@ export default {
       logoSpotify,
       logoJira,
       logoInvision,
-      count: [],
+      count: {},
     };
   },
   computed: mapState(['currentUser']),
   created(){
-    if(this.currentUser.account_type.includes('A')){
+    if(this.currentUser.account_type.includes('A')) this.getCount()
+    if(this.currentUser.account_type.includes('F')) this.getStudAdvising()
+  },
+  methods: {
+    getCount(){
       this.$secured.get('/api/v1/count') 
         .then(response => { this.count = response.data })
+        .catch(error => { console.log(error) })
+    },
+    getStudAdvising(){
+      this.$secured.get('/api/v1/get_stud_advising') 
+        .then(response => this.count = response.data)
         .catch(error => { console.log(error) })
     }
   },
