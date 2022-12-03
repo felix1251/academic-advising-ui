@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-1">
     <div
       v-for="(item, index) in advising_list[1]"
       v-bind:key="index"
@@ -15,6 +15,7 @@
           size="small"
           :data-source="item.data"
           :pagination="{ pageSize: 10 }"
+          rowKey="id"
         >
         </a-table>
       </div>
@@ -33,6 +34,7 @@
           bordered
           :data-source="item.data"
           :pagination="{ pageSize: 10 }"
+          rowKey="id"
         >
         </a-table>
       </div>
@@ -51,6 +53,7 @@
           size="small"
           :data-source="item.data"
           :pagination="{ pageSize: 10 }"
+          rowKey="id"
         >
         </a-table>
       </div>
@@ -69,34 +72,38 @@
             size="small"
             :data-source="item.data"
             :pagination="{ pageSize: 10 }"
+            rowKey="id"
           >
           </a-table>
         </div>
       </div>
-      <div class="m-0 p-1">
+      <div v-if="currentUser.account_type.includes('F')" class="m-0 p-1">
         <h6 class="p-0">Students</h6>
         <a-table
             :scroll="{ y: 600 }"
             bordered
-            :columns="columns"
+            :columns="studColumns"
             size="small"
-            :data-source="item.data"
+            :data-source="students"
+            rowKey="id"
             :pagination="{ pageSize: 10 }"
           >
+            <template #actions>
+              <a-button size="small" type="primary">Advise</a-button>
+            </template>
           </a-table>
       </div>
   </div>
 </template>
-
 <script>
 import { mapState } from "vuex";
-
 export default {
   name: "subjects",
   data() {
     return {
       advising_list: [],
       selected_rows: [],
+      students: [],
       columns: [
         {
           title: "Subjects",
@@ -126,14 +133,27 @@ export default {
           width: 60,
         },
         {
-          title: "Midddle Init",
+          title: "Midddle Name",
           dataIndex: "middle_name",
           width: 50,
         },
         {
           title: "Last Name",
-          dataIndex: "last name",
+          dataIndex: "last_name",
           width: 50,
+        },
+        {
+          title: "Year",
+          dataIndex: "year",
+          width: 50,
+        },
+        {
+          title: "Actions",
+          key: "actions",
+          width: 30,
+          slots: {
+            customRender: 'actions',
+          },
         },
       ]
     };
@@ -143,19 +163,11 @@ export default {
   },
   created() {
     if(this.currentUser.account_type.includes('S')) this.fetchAdvising()
-    if(this.currentUser.account_type.includes('F')) this.fetchAdvising()
+    if(this.currentUser.account_type.includes('F')) this.fecthStud()
   },
   methods: {
     onSelectChange: function(value) {
       this.selected_rows = value;
-        // this.$secured.get("/api/v1/check_if_prereq_exist?selected_rows=" + this.selected_rows + "&subject_id=" + value[0])
-        // .then(() => {
-        //   this.selected_rows = value;
-        // })
-        // .catch((error) => {
-        //   console.log(error);
-        // });
-        // console.log(value)
     },
     ordinal_suffix_of(i, type) {
       var j = i % 10,
@@ -175,8 +187,17 @@ export default {
       }
       return i + "th";
     },
+    fecthStud(){
+      this.$secured.get("/api/v1/adviser_students?adviser_id="+this.currentUser.details.id)
+        .then(response=>{
+          this.students=response.data
+        })
+        .catch(error=>{
+          console.log(error)
+        })
+    },
     fetchAdvising() {
-      this.$secured.get("/api/v1/recommendation_year_sem?student_id=" + 1 )
+      this.$secured.get("/api/v1/recommendation_year_sem?student_id=" + this.currentUser.details.id )
         .then((response) => {
           this.advising_list = response.data.rows;
           this.selected_rows = response.data.selected_rows
