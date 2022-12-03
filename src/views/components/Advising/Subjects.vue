@@ -81,6 +81,7 @@
 export default {
   props: {
     advising_list: { type: Object },
+    columns: {type: Array}
   },
 };
 </script>

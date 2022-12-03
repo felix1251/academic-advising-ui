@@ -76,7 +76,6 @@ export default {
         first_name: [{ required: true, message: 'required' }],
         middle_name: [{required: true, message: 'required'}],
         last_name: [{ required: true, message: 'required' }],
-        suffix: [{ required: true, message: 'required' }],
         gender: [{ required: true, message: 'required' }],
         password: [{ required: true, message: 'required' }],
         password_confirmation: [{ required: true, message: 'required' }],

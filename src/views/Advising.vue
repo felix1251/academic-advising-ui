@@ -1,7 +1,14 @@
 <template>
   <div class="container-fluid py-1">
-    <Subjects v-if="currentUser.account_type.includes('S')" :advising_list="advising_list"/>
-    <div v-if="currentUser.account_type.includes('F')" class="m-0 p-1">
+    <Subjects 
+      v-if="currentUser.account_type.includes('S')" 
+      :advising_list="advising_list" 
+      :columns="columns"
+    />
+    <div 
+      v-if="currentUser.account_type.includes('F')" 
+      class="m-0 p-1"
+    >
       <h6 class="p-0">Students</h6>
       <a-table
         :scroll="{ x: 600 }"
@@ -30,7 +37,7 @@
       :zIndex="9999"
       :destroyOnClose="true"
     >
-      <Subjects :advising_list="advising_list"/>
+      <!-- <Subjects :advising_list="advising_list"/> -->
     </a-drawer>
   </div>
 </template>
