@@ -1,109 +1,51 @@
 <template>
   <div class="container-fluid py-1">
-    <div
-      v-for="(item, index) in advising_list[1]"
-      v-bind:key="index"
-      class="m-0 p-1"
-    >
-      <div v-if="item.data.length != 0">
-        <h6 class="p-0">Firts Year - {{ ordinal_suffix_of(item.sem, 1) }}</h6>
-        <a-table
-          :scroll="{ x: 600 }"
-          sorter
-          bordered
-          :columns="columns"
-          size="small"
-          :data-source="item.data"
-          :pagination="{ pageSize: 10 }"
-          rowKey="id"
-        >
-        </a-table>
-      </div>
-    </div>
-    <div
-      v-for="(item, index) in advising_list[2]"
-      v-bind:key="index"
-      class="m-0 p-1"
-    >
-      <div v-if="item.data.length != 0">
-        <h6 class="p-0">Firts Year - {{ ordinal_suffix_of(item.sem, 1) }}</h6>
-        <a-table
-          :scroll="{ x: 600 }"
-          :columns="columns"
-          size="small"
-          bordered
-          :data-source="item.data"
-          :pagination="{ pageSize: 10 }"
-          rowKey="id"
-        >
-        </a-table>
-      </div>
-    </div>
-    <div
-      v-for="(item, index) in advising_list[3]"
-      v-bind:key="index"
-      class="m-0 p-1"
-    >
-      <div v-if="item.data.length != 0">
-        <h6 class="p-0">Firts Year - {{ ordinal_suffix_of(item.sem, 1) }}</h6>
-        <a-table
-          :scroll="{ x: 600 }"
-          bordered
-          :columns="columns"
-          size="small"
-          :data-source="item.data"
-          :pagination="{ pageSize: 10 }"
-          rowKey="id"
-        >
-        </a-table>
-      </div>
-    </div>
-      <div
-        v-for="(item, index) in advising_list[4]"
-        v-bind:key="index"
-        class="m-0 p-1"
+    <Subjects v-if="currentUser.account_type.includes('S')" :advising_list="advising_list"/>
+    <div v-if="currentUser.account_type.includes('F')" class="m-0 p-1">
+      <h6 class="p-0">Students</h6>
+      <a-table
+        :scroll="{ x: 600 }"
+        bordered
+        :columns="studColumns"
+        size="small"
+        :data-source="students"
+        rowKey="id"
+        :pagination="{ pageSize: 10 }"
       >
-        <div v-if="item.data.length != 0">
-          <h6 class="p-0">Firts Year - {{ ordinal_suffix_of(item.sem, 1) }}</h6>
-          <a-table
-            :scroll="{ y: 600 }"
-            bordered
-            :columns="columns"
+        <template #actions="{ record }">
+          <a-button
             size="small"
-            :data-source="item.data"
-            :pagination="{ pageSize: 10 }"
-            rowKey="id"
+            shape="round"
+            type="primary"
+            @click.prevent="openDrawer(record.id)"
+            >Advise</a-button
           >
-          </a-table>
-        </div>
-      </div>
-      <div v-if="currentUser.account_type.includes('F')" class="m-0 p-1">
-        <h6 class="p-0">Students</h6>
-        <a-table
-            :scroll="{ y: 600 }"
-            bordered
-            :columns="studColumns"
-            size="small"
-            :data-source="students"
-            rowKey="id"
-            :pagination="{ pageSize: 10 }"
-          >
-            <template #actions>
-              <a-button size="small" type="primary">Advise</a-button>
-            </template>
-          </a-table>
-      </div>
+        </template>
+      </a-table>
+    </div>
+    <a-drawer
+      v-model:visible="drawer" 
+      width="100%"
+      title="Advising"
+      :zIndex="9999"
+      :destroyOnClose="true"
+    >
+      <Subjects :advising_list="advising_list"/>
+    </a-drawer>
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
+import Subjects from "@/views/components/Advising/Subjects.vue"
+
 export default {
   name: "subjects",
   data() {
     return {
-      advising_list: [],
+      advising_list: {},
       selected_rows: [],
       students: [],
+      drawer: false,
       columns: [
         {
           title: "Subjects",
@@ -162,7 +104,7 @@ export default {
     ...mapState(["currentUser"]),
   },
   created() {
-    if(this.currentUser.account_type.includes('S')) this.fetchAdvising()
+    if(this.currentUser.account_type.includes('S')) this.fetchAdvising(this.currentUser.details.id)
     if(this.currentUser.account_type.includes('F')) this.fecthStud()
   },
   methods: {
@@ -196,8 +138,8 @@ export default {
           console.log(error)
         })
     },
-    fetchAdvising() {
-      this.$secured.get("/api/v1/recommendation_year_sem?student_id=" + this.currentUser.details.id )
+    fetchAdvising(id) {
+      this.$secured.get("/api/v1/recommendation_year_sem?student_id=" + id )
         .then((response) => {
           this.advising_list = response.data.rows;
           this.selected_rows = response.data.selected_rows
@@ -206,6 +148,13 @@ export default {
           console.log(error);
         });
     },
+    openDrawer(id){
+      this.drawer = true
+      this.fetchAdvising(id)
+    }
   },
+  components: {
+    Subjects,
+  }
 };
 </script>
