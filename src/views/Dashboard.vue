@@ -50,7 +50,7 @@
           <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4" v-if="currentUser.account_type.includes('F')">
             <mini-statistics-card
               :title="{ text: 'Advising', value: count.studs_count }"
-              detail="Over all Users"
+              detail="Adviser"
               :icon="{
                 name: 'person',
                 color: 'text-white',
@@ -60,12 +60,23 @@
           </div>
           <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4" v-if="currentUser.account_type.includes('S')">
             <mini-statistics-card
-              :title="{ text: 'Units Remaining', value: 0 }"
-              detail="Over all Users"
+              :title="{ text: 'Units Total', value: count.total_units }"
+              detail="Student Total Units"
               :icon="{
-                name: 'person',
+                name: 'summarize',
                 color: 'text-white',
                 background: 'success',
+              }"
+            />
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4" v-if="currentUser.account_type.includes('S')">
+            <mini-statistics-card
+              :title="{ text: 'Units Remaining', value: count.remaining_units }"
+              detail="Student Remaining Units"
+              :icon="{
+                name: 'summarize',
+                color: 'text-white',
+                background: 'warning',
               }"
             />
           </div>
@@ -110,7 +121,7 @@ export default {
   created(){
     if(this.currentUser.account_type.includes('A')) this.getCount()
     if(this.currentUser.account_type.includes('F')) this.getStudAdvising()
-    if(this.currentUser.account_type.includes('F')) this.getStudRemainingUnits()
+    if(this.currentUser.account_type.includes('S')) this.getStudRemainingUnits()
   },
   methods: {
     getCount(){
@@ -125,7 +136,7 @@ export default {
     },
     getStudRemainingUnits(){
       this.$secured.get('/api/v1/get_student_remaining_units') 
-        .then(response => this.count.total_units = response.data)
+        .then(response => this.count = response.data)
         .catch(error => { console.log(error) })
     },
     
