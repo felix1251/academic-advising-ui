@@ -22,20 +22,23 @@
     </a-modal>
     <div class="w-20 mb-2">
       <h6 class="p-0">Academic Year</h6>
-      <select
-        v-model="academicYearId"
-        class="form-select p-2 bg-white border"
-        style="font-size: 17px"
-      >
-        <option
-          style="font-size: 18px"
-          v-for="option in academicYearList"
-          :value="option.id"
-          v-bind:key="option.id"
+      <div class="d-flex gap-2 align-items-center">
+        <select
+          v-model="academicYearId"
+          class="form-select p-2 bg-white border"
+          style="font-size: 17px"
         >
-          {{ option.from }} - {{ option.to }}
-        </option>
-      </select>
+          <option
+            style="font-size: 18px"
+            v-for="option in academicYearList"
+            :value="option.id"
+            v-bind:key="option.id"
+          >
+            {{ option.from }} - {{ option.to }}
+          </option>
+        </select>
+        <a-button class="float-right" type="primary">+</a-button>
+      </div>
     </div>
     <div class="w-20 mb-2">
       <h6 class="p-0">Semester</h6>
@@ -108,6 +111,7 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -126,6 +130,7 @@ export default {
       academicYearList: [],
       academicYearId: null,
       errMsg: "",
+      drawer: false,
       semester: [
         { id: 1, desc: "1st semester" },
         { id: 2, desc: "2nd semester" },
@@ -206,6 +211,7 @@ export default {
         .get("/api/v1/academic_years")
         .then((response) => {
           this.academicYearList = response.data;
+          if(response.data.length > 0) this.academicYearId =  response.data[0].id
         })
         .catch((error) => {
           console.log(error);
