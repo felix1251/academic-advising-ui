@@ -110,6 +110,7 @@ export default {
   created(){
     if(this.currentUser.account_type.includes('A')) this.getCount()
     if(this.currentUser.account_type.includes('F')) this.getStudAdvising()
+    if(this.currentUser.account_type.includes('F')) this.getStudRemainingUnits()
   },
   methods: {
     getCount(){
@@ -121,7 +122,13 @@ export default {
       this.$secured.get('/api/v1/get_stud_advising') 
         .then(response => this.count = response.data)
         .catch(error => { console.log(error) })
-    }
+    },
+    getStudRemainingUnits(){
+      this.$secured.get('/api/v1/get_student_remaining_units') 
+        .then(response => this.count.total_units = response.data)
+        .catch(error => { console.log(error) })
+    },
+    
   },
   components: {
     MiniStatisticsCard,
