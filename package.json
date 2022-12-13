@@ -17,6 +17,7 @@
     "chart.js": "3.6.0",
     "core-js": "3.6.5",
     "crypto-js": "^4.1.1",
+    "jspdf": "^2.5.1",
     "secure-web-storage": "^1.0.2",
     "vue": "3.2.0",
     "vue-axios": "^2.1.5",
