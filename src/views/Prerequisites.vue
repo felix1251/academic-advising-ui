@@ -63,8 +63,8 @@
       </div>
       <div class="mb-2">
         <h6 class="p-0">Select Subject Prerequisites </h6>
-         <select
-            v-model="prerequisites_id"
+        <select
+            v-model="prerequisite_id"
             @change="onChangeSelectPrerequisites"
             class="form-select p-2 bg-white border"
             style="font-size: 17px"
@@ -80,17 +80,17 @@
             </option>
           </select>
       </div>
-       <div class="mb-2">
+      <div class="mb-2">
         <h6 class="p-0">Create group</h6>
           <a-input
             size="large"
-            type="numbers"
+            type="number"
             placeholder="Enter Curriculum Code"
             v-model:value="group_id"
             required
           />
       </div>
-     </a-spin>
+    </a-spin>
     </a-modal>
   
   </div>
@@ -111,7 +111,7 @@ export default {
     description: "",
     subject_id: null,
     prerequisite_id: null,
-    group_id: null,
+    group_id: 1,
     subjectsList: [],
     prerequisitesList: [],
     columns: [
@@ -225,9 +225,9 @@ export default {
           this.loading = false
       })
       this.loading = false
-      // this.subject_id = null
-      // this.prerequisite_id = null
-      // this.group_id = null
+      this.subject_id = null
+      this.prerequisite_id = null
+      this.group_id = 1
       this.visible = false
     },
 

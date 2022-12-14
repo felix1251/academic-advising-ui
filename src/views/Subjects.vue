@@ -22,34 +22,12 @@
           View prerequisites
         </a-button>
       </template>
-        <!-- <template
-          v-if="currentUser.role == 'system_admin'"
-          #operation="{ record }"
-          >
-          <a-button
-            type="primary"
-            style="background: greenyellow; color:black"
-            @click.prevent="editUser(record.id)"
-            shape="round"
-            size="small"
-            >Edit</a-button
-          >
-          {{ " " }}
-          <a-button
-            type="primary"
-            danger
-            @click.prevent="deleteSubject(record.id)"
-            shape="round"
-            size="small"
-            >Delete</a-button
-          >
-        </template> -->
-     </a-table>
+    </a-table>
     <a-modal v-model:visible="visible" title="Create Subject" centered @ok="createSubject">
-     <a-spin :spinning="loading" size="large">
+    <a-spin :spinning="loading" size="large">
       <div class="mb-2">
         <h6 class="p-0">Select College </h6>
-         <select
+        <select
             v-model="college_id"
             @change="onChangeSelectCollege"
             class="form-select p-2 bg-white border"
@@ -85,8 +63,7 @@
             </option>
           </select>
       </div>
-       
-       <div class="mb-2">
+      <div class="mb-2">
         <h6 class="p-0">Code</h6>
           <a-input
             size="large"
@@ -133,7 +110,7 @@
             </option>
           </select>
       </div>
-     </a-spin>
+    </a-spin>
     </a-modal>
     <a-modal
       v-model:visible="prereqModal"
@@ -147,7 +124,6 @@
     </a-modal>
   </div>
 </template>
-
 <script>
 
 import { mapState } from "vuex";
@@ -163,7 +139,7 @@ export default {
     visible: false,
     description: "",
     units: null,
-    condition_id: null,
+    condition_id: "NONE",
     subject_id: null,
     college_id: null,
     college_code: "",
@@ -206,7 +182,7 @@ export default {
           width: 100,
           customRender: (s) => s.record.college_code.toUpperCase() ,
         },
-       {
+        {
           title: 'Department',
           customRender: (s) => <div>{s.record.department_description} ({s.record.department_code.toUpperCase()})</div> ,
           width: 200,
@@ -238,7 +214,7 @@ export default {
   computed: {
     ...mapState(["currentUser"]),
   },
-  mounted: function (){
+  created(){
     this.fetchSubject();
   },
   
@@ -346,27 +322,16 @@ export default {
           this.loading = false
           console.log(error.response.data.code)
       })
-      // this.code = ""
+      this.code = ""
       this.description = ""
-      // this.units = null
-      // this.college_id = null
-      // this.department_id = null
+      this.units = null
+      this.college_id = null
+      this.department_id = null
       this.loading = false
       this.visible = false
-      // this.college_id = null
+      this.college_id = null
+      this.condition_id = "NONE"
     },
-    // deleteSubject(id) {
-    //   console.log(id)
-    //   this.loading = true
-    //   this.$secured.delete(`/api/v1/subjects/${id}`)
-    //   this.loading = false
-    // },
-    // editUser(id) {
-    //   console.log(id);
-    // },
   }
-  // mounted: function (){
-  //  this.fetchCurr()
-  // },
 };
 </script>
