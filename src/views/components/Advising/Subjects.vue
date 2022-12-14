@@ -81,7 +81,8 @@
 export default {
   props: {
     advising_list: { type: Object },
-    columns: {type: Array}
+    columns: {type: Array},
+    ordinal_suffix_of: {type: Function},
   },
 };
 </script>

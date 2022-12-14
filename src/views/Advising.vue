@@ -4,6 +4,7 @@
       v-if="currentUser.account_type.includes('S')" 
       :advising_list="advising_list" 
       :columns="columns"
+      :ordinal_suffix_of="ordinal_suffix_of"
     />
     <div 
       v-if="currentUser.account_type.includes('F')" 
