@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid py-1">
-    <div class="d-flex gap-2 justify-content-between align-items-center" v-if="currentUser.account_type.includes('S')" >
-      <span class="mx-1" v-if="adviser"><b>Adviser: </b>{{`${adviser.first_name} ${adviser.middle_name} ${adviser.last_name}`}}</span>
+    <div class="d-flex gap-2 justify-content-between align-items-center" v-if="currentUser.account_type.includes('S') && adviser" >
+      <span class="mx-2"><b>Adviser: </b>{{`${adviser.first_name} ${adviser.middle_name} ${adviser.last_name}`}}</span>
       <a-button 
         class="mb-2" type="primary"
         @click.prevent="openDrawer()"
@@ -39,18 +39,19 @@
     </div>
     <a-drawer
       v-model:visible="drawer"
-      width="100%"
+      width="900"
       title="Advising"
       :zIndex="9999"
       :destroyOnClose="true"
     >
-
+      <comment/>
     </a-drawer>
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
 import Subjects from "@/views/components/Advising/Subjects.vue";
+import Comment from "@/views/components/Advising/Comment.vue";
 
 export default {
   name: "subjects",
@@ -184,6 +185,7 @@ export default {
   },
   components: {
     Subjects,
+    Comment
   },
 };
 </script>
