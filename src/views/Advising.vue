@@ -1,15 +1,21 @@
 <template>
   <div class="container-fluid py-1">
-    <Subjects 
-      v-if="currentUser.account_type.includes('S')" 
-      :advising_list="advising_list" 
+    <div class="d-flex gap-2 justify-content-between align-items-center" v-if="currentUser.account_type.includes('S')" >
+      <span class="mx-1" v-if="adviser"><b>Adviser: </b>{{`${adviser.first_name} ${adviser.middle_name} ${adviser.last_name}`}}</span>
+      <a-button 
+        class="mb-2" type="primary"
+        @click.prevent="openDrawer()"
+      >
+        Advising
+      </a-button>
+    </div>
+    <Subjects
+      v-if="currentUser.account_type.includes('S')"
+      :advising_list="advising_list"
       :columns="columns"
       :ordinal_suffix_of="ordinal_suffix_of"
     />
-    <div 
-      v-if="currentUser.account_type.includes('F')" 
-      class="m-0 p-1"
-    >
+    <div v-if="currentUser.account_type.includes('F')" class="m-0 p-1">
       <h6 class="p-0">Students</h6>
       <a-table
         :scroll="{ x: 600 }"
@@ -32,19 +38,19 @@
       </a-table>
     </div>
     <a-drawer
-      v-model:visible="drawer" 
+      v-model:visible="drawer"
       width="100%"
       title="Advising"
       :zIndex="9999"
       :destroyOnClose="true"
     >
-      <!-- <Subjects :advising_list="advising_list"/> -->
+
     </a-drawer>
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
-import Subjects from "@/views/components/Advising/Subjects.vue"
+import Subjects from "@/views/components/Advising/Subjects.vue";
 
 export default {
   name: "subjects",
@@ -54,6 +60,7 @@ export default {
       selected_rows: [],
       students: [],
       drawer: false,
+      adviser: null,
       columns: [
         {
           title: "Subjects",
@@ -102,21 +109,25 @@ export default {
           key: "actions",
           width: 30,
           slots: {
-            customRender: 'actions',
+            customRender: "actions",
           },
         },
-      ]
+      ],
     };
   },
   computed: {
     ...mapState(["currentUser"]),
   },
   created() {
-    if(this.currentUser.account_type.includes('S')) this.fetchAdvising(this.currentUser.details.id)
-    if(this.currentUser.account_type.includes('F')) this.fecthStud()
+    if (this.currentUser.account_type.includes("S")){
+      this.getStudAdviser()
+      this.fetchAdvising(this.currentUser.details.id);
+      
+    }
+    if (this.currentUser.account_type.includes("F")) this.fecthStud();
   },
   methods: {
-    onSelectChange: function(value) {
+    onSelectChange: function (value) {
       this.selected_rows = value;
     },
     ordinal_suffix_of(i, type) {
@@ -129,40 +140,50 @@ export default {
         return i + "nd Semester";
       }
       if (j == 3 && k != 13) {
-        if(type == 1) {
+        if (type == 1) {
           return "Summer";
-        }else{
+        } else {
           return i + "rd";
         }
       }
       return i + "th";
     },
-    fecthStud(){
-      this.$secured.get("/api/v1/adviser_students?adviser_id="+this.currentUser.details.id)
-        .then(response=>{
-          this.students=response.data
-        })
-        .catch(error=>{
-          console.log(error)
-        })
-    },
-    fetchAdvising(id) {
-      this.$secured.get("/api/v1/recommendation_year_sem?student_id=" + id )
+    fecthStud() {
+      this.$secured
+        .get(
+          "/api/v1/adviser_students?adviser_id=" + this.currentUser.details.id
+        )
         .then((response) => {
-          this.advising_list = response.data.rows;
-          this.selected_rows = response.data.selected_rows
+          this.students = response.data;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    openDrawer(id){
-      this.drawer = true
-      this.fetchAdvising(id)
-    }
+    getStudAdviser(){
+      this.$secured.get("/api/v1/get_stud_adviser?adviser_id=" + this.currentUser.details.adviser_id)
+        .then(response=>{
+          this.adviser = response.data
+        })
+    },
+    fetchAdvising(id) {
+      this.$secured
+        .get("/api/v1/recommendation_year_sem?student_id=" + id)
+        .then((response) => {
+          this.advising_list = response.data.rows;
+          this.selected_rows = response.data.selected_rows;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    openDrawer() {
+      this.drawer = true;
+      // this.fetchAdvising(id);
+    },
   },
   components: {
     Subjects,
-  }
+  },
 };
 </script>
