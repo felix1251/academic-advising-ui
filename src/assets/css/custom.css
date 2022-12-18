@@ -1,3 +1,19 @@
 .v-toast{
       z-index: 9999999999999999999;
 }
+
+.ant-list-item{
+      padding: 0;
+}
+
+.comment-list .ant-list-header{
+      padding-top: 0px;
+}
+
+.ant-list-items{
+      height: 50vh;
+      overflow: auto;
+      border: 1px solid gray;
+      padding: 6px;
+      border-radius: 10px;
+}

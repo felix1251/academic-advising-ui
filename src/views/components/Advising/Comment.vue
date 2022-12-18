@@ -1,7 +1,7 @@
 <template>
   <a-list
     class="comment-list"
-    :header="`${data.length} replies`"
+    :header="`${data.length} messages`"
     item-layout="horizontal"
     :data-source="data"
   >
@@ -12,7 +12,7 @@
             <span v-for="(action, index) in item.actions" :key="index">{{ action }}</span>
           </template> -->
           <template #content>
-            <p>
+            <p style="font-size: 14px">
               {{ item.message }}
             </p>
           </template>
@@ -25,11 +25,22 @@
       </a-list-item>
     </template>
   </a-list>
+  <div class="mt-3">
+    <a-form-item>
+      <a-textarea placeholder="Write message here...." :rows="3" v-model:value="messageValue" />
+    </a-form-item>
+    <a-form-item>
+      <a-button html-type="submit" :loading="submitting" type="primary" @click="handleSubmit">
+        Add Comment
+      </a-button>
+    </a-form-item>
+  </div>
 </template>
 <script>
 export default {
   data(){
     return {
+      messageValue: "",
       data: [ 
         {
           last_name: "Abacajen",
@@ -38,7 +49,7 @@ export default {
         {
           last_name: "Wade",
           message: "Hello"
-        }
+        },
       ]
     }
   }

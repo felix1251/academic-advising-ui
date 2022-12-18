@@ -39,7 +39,7 @@
     </div>
     <a-drawer
       v-model:visible="drawer"
-      width="900"
+      width="100%"
       title="Advising"
       :zIndex="9999"
       :destroyOnClose="true"
